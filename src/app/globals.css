@@ -1,24 +1,55 @@
-@import "tailwindcss";
-
-@theme {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Background Gradient */
+.background-gradient {
+  background: radial-gradient(circle at 10% 10%, rgba(40, 40, 50, 0.9), rgba(20, 20, 30, 1));
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
 }
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Glassmorphism Effect */
+.glassmorphism {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Input Fields */
+.custom-input {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+.custom-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
 }
+
+/* Buttons */
+.btn-primary-custom {
+  background-color: #2d87f0;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.btn-secondary-custom {
+  background-color: rgba(255, 255, 255, 0.2);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  color: white;
+}
+
+.btn-primary-custom:hover {
+  background-color: #1a6ed0;
+}
+
+
+
