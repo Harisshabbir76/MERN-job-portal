@@ -9,37 +9,36 @@ export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [step, setStep] = useState(1); 
+  const [step, setStep] = useState(1);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
 
-
-  const handleSendCode = async (e) => {
+  const handleSendCode = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     try {
       const res = await axios.post("http://localhost:5000/forgot-password", { email });
       setMessage(res.data.message);
-      setStep(2); 
-    } catch (err) {
+      setStep(2);
+    } catch (err: any) {
       setError(err.response?.data?.error || "Failed to send code.");
     }
   };
 
-  const handleVerifyCode = async (e) => {
+  const handleVerifyCode = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     try {
       const res = await axios.post("http://localhost:5000/verify-code", { email, code: verificationCode });
       setMessage(res.data.message);
-      setStep(3); 
-    } catch (err) {
+      setStep(3);
+    } catch (err: any) {
       setError(err.response?.data?.error || "Invalid verification code.");
     }
   };
 
-  const handleResetPassword = async (e) => {
+  const handleResetPassword = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     try {
@@ -52,11 +51,10 @@ export default function ForgotPassword() {
       setEmail("");
       setVerificationCode("");
       setNewPassword("");
-    } catch (err) {
+    } catch (err: any) {
       setError(err.response?.data?.error || "Failed to reset password.");
     }
   };
-  
 
   return (
     <Container className="my-5">
@@ -70,9 +68,16 @@ export default function ForgotPassword() {
           <Form onSubmit={handleSendCode}>
             <Form.Group className="mb-3">
               <Form.Label>Email Address</Form.Label>
-              <Form.Control type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              <Form.Control
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </Form.Group>
-            <Button type="submit" variant="primary" className="w-100">Send Verification Code</Button>
+            <Button type="submit" variant="primary" className="w-100">
+              Send Verification Code
+            </Button>
           </Form>
         )}
 
@@ -80,9 +85,16 @@ export default function ForgotPassword() {
           <Form onSubmit={handleVerifyCode}>
             <Form.Group className="mb-3">
               <Form.Label>Enter Verification Code</Form.Label>
-              <Form.Control type="text" value={verificationCode} onChange={(e) => setVerificationCode(e.target.value)} required />
+              <Form.Control
+                type="text"
+                value={verificationCode}
+                onChange={(e) => setVerificationCode(e.target.value)}
+                required
+              />
             </Form.Group>
-            <Button type="submit" variant="primary" className="w-100">Verify Code</Button>
+            <Button type="submit" variant="primary" className="w-100">
+              Verify Code
+            </Button>
           </Form>
         )}
 
@@ -90,9 +102,16 @@ export default function ForgotPassword() {
           <Form onSubmit={handleResetPassword}>
             <Form.Group className="mb-3">
               <Form.Label>New Password</Form.Label>
-              <Form.Control type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required />
+              <Form.Control
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+              />
             </Form.Group>
-            <Button type="submit" variant="success" className="w-100">Reset Password</Button>
+            <Button type="submit" variant="success" className="w-100">
+              Reset Password
+            </Button>
           </Form>
         )}
       </Card>
