@@ -82,8 +82,14 @@ export default function ProfilePage() {
       setUser(res.data); // Update frontend with new user data
       setShowForm(false); // Hide form after successful update
       alert("Profile updated successfully!");
-    } catch (err) {
-      console.error("Update failed:", err.response?.data || err.message);
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        console.error("Update failed:", err.response?.data || err.message);
+      } else if (err instanceof Error) {
+        console.error("Update failed:", err.message);
+      } else {
+        console.error("Update failed:", err);
+      }
       alert("Error updating profile.");
     }
   };
