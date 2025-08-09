@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Form, Button, Card, Container, Row, Col, Alert, Spinner } from "react-bootstrap";
 import { useRouter, useParams } from "next/navigation";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 
 export default function ApplyPage() {
   const [experience, setExperience] = useState("");
@@ -73,7 +73,7 @@ export default function ApplyPage() {
 
       alert("Application submitted and email sent to the company!");
       router.push("/");
-    } catch (error: unknown) {
+    } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error("API Error:", error.response?.data);
         setError(error.response?.data?.error || "Something went wrong!");
@@ -176,7 +176,7 @@ export default function ApplyPage() {
                     type="file"
                     accept=".pdf,.doc,.docx"
                     required
-                    onChange={(e) =>
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setResume(e.target.files?.[0] || null)
                     }
                   />
