@@ -31,7 +31,7 @@ export default function ProfilePage() {
 
     const fetchUserData = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/user/${userId}`, {
+        const res = await axios.get(`https://mern-job-portal-6i94.onrender.com/user/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(res.data);
@@ -64,7 +64,7 @@ export default function ProfilePage() {
       const updatedSkills = [...(user.skills || []), ...formData.skills.split(",").map((s) => s.trim())];
 
       const res = await axios.put(
-        "http://localhost:5000/user/update",
+        "https://mern-job-portal-6i94.onrender.com/user/update",
         {
           skills: Array.from(new Set(updatedSkills)), // Remove duplicates
           linkedin: formData.linkedin || user.linkedin,

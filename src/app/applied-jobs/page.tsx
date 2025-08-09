@@ -31,12 +31,12 @@ export default function AppliedJobs() {
     const fetchAppliedJobs = async () => {
       try {
         const res = await axios.get<string[]>(
-          "http://localhost:5000/user/applied-jobs",
+          "https://mern-job-portal-6i94.onrender.com/user/applied-jobs",
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
         const jobsRes = await axios.get<Job[]>(
-          "http://localhost:5000/api/jobs"
+          "https://mern-job-portal-6i94.onrender.com/api/jobs"
         );
 
         const appliedJobsData = jobsRes.data.filter((job: Job) =>

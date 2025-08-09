@@ -39,7 +39,7 @@ export default function PostJobs() {
       }
 
       await axios.post(
-        "http://localhost:5000/api/post-jobs",
+        "https://mern-job-portal-6i94.onrender.com/api/post-jobs",
         {
           title,
           description,

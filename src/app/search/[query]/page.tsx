@@ -36,7 +36,7 @@ export default function SearchResults() {
     const fetchData = async () => {
       try {
         // Fetch all jobs
-        const res = await axios.get<Job[]>("http://localhost:5000/api/jobs");
+        const res = await axios.get<Job[]>("https://mern-job-portal-6i94.onrender.com/api/jobs");
         const filteredJobs = res.data.filter((job: Job) =>
           job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           job.companyName.toLowerCase().includes(searchQuery.toLowerCase())
@@ -44,7 +44,7 @@ export default function SearchResults() {
         setJobs(filteredJobs);
 
         // Fetch applied jobs
-        const appliedRes = await axios.get<string[]>("http://localhost:5000/user/applied-jobs", {
+        const appliedRes = await axios.get<string[]>("https://mern-job-portal-6i94.onrender.com/user/applied-jobs", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setAppliedJobs(appliedRes.data);

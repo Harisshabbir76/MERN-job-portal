@@ -12,7 +12,7 @@ const RoozagarNavbar = () => {
     const token = localStorage.getItem("token");
     if (token) {
       axios
-        .get("http://localhost:5000/user", {
+        .get("https://mern-job-portal-6i94.onrender.com/user", {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => {
@@ -30,7 +30,7 @@ const RoozagarNavbar = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.get("http://localhost:5000/logout");
+      await axios.get("https://mern-job-portal-6i94.onrender.com/logout");
       localStorage.removeItem("token");
       setIsLoggedIn(false);
       router.replace("/login");

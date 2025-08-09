@@ -36,7 +36,7 @@ export default function EditJob() {
       }
 
       try {
-        const res = await axios.get(`http://localhost:5000/api/jobs/${jobId}`);
+        const res = await axios.get(`https://mern-job-portal-6i94.onrender.com/api/jobs/${jobId}`);
         const job = res.data;
         setTitle(job.title);
         setDescription(job.description);
@@ -68,7 +68,7 @@ export default function EditJob() {
       }
 
       await axios.put(
-        `http://localhost:5000/api/jobs/${jobId}/edit`,
+        `https://mern-job-portal-6i94.onrender.com/api/jobs/${jobId}/edit`,
         {
           title,
           description,

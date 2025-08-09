@@ -15,7 +15,7 @@ export default function Login() {
     setError("");
 
     try {
-      const res = await axios.post("http://localhost:5000/login", {
+      const res = await axios.post("https://mern-job-portal-6i94.onrender.com/login", {
         email,
         password,
       });

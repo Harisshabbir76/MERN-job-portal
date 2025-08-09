@@ -28,7 +28,7 @@ export default function ApplyPage() {
 
     const fetchJob = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/jobs/${jobId}`);
+        const res = await axios.get(`https://mern-job-portal-6i94.onrender.com/api/jobs/${jobId}`);
         setJob(res.data);
       } catch (err) {
         setError("Failed to fetch job details");
@@ -61,7 +61,7 @@ export default function ApplyPage() {
 
     try {
       await axios.post(
-        `http://localhost:5000/api/jobs/${jobId}/apply`,
+        `https://mern-job-portal-6i94.onrender.com/api/jobs/${jobId}/apply`,
         formData,
         {
           headers: {

@@ -42,13 +42,13 @@ export default function Jobs() {
     const fetchData = async () => {
       try {
         // Fetch user data
-        const userRes = await axios.get<User>("http://localhost:5000/user", {
+        const userRes = await axios.get<User>("https://mern-job-portal-6i94.onrender.com/user", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(userRes.data);
 
         // Fetch jobs data
-        const jobsRes = await axios.get<Job[]>("http://localhost:5000/api/jobs");
+        const jobsRes = await axios.get<Job[]>("https://mern-job-portal-6i94.onrender.com/api/jobs");
         setJobs(jobsRes.data);
 
         // Filter out jobs posted by logged-in user
@@ -59,7 +59,7 @@ export default function Jobs() {
 
         // Fetch applied jobs (IDs)
         const appliedJobsRes = await axios.get<string[]>(
-          "http://localhost:5000/user/applied-jobs",
+          "https://mern-job-portal-6i94.onrender.com/user/applied-jobs",
           {
             headers: { Authorization: `Bearer ${token}` },
           }

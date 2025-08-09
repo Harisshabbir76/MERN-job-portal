@@ -40,13 +40,13 @@ export default function Jobs() {
     const fetchUserAndJobs = async () => {
       try {
         // Fetch user
-        const userRes = await axios.get<User>("http://localhost:5000/user", {
+        const userRes = await axios.get<User>("https://mern-job-portal-6i94.onrender.com/user", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(userRes.data);
 
         // Fetch jobs
-        const jobsRes = await axios.get<Job[]>("http://localhost:5000/api/jobs");
+        const jobsRes = await axios.get<Job[]>("https://mern-job-portal-6i94.onrender.com/api/jobs");
         setJobs(jobsRes.data);
 
         // Filter jobs posted by logged-in user

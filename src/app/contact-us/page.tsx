@@ -18,7 +18,7 @@ export default function ContactUs() {
     setError("")
 
     try {
-      const res = await axios.post("http://localhost:5000/reach-out/contact-us", {
+      const res = await axios.post("https://mern-job-portal-6i94.onrender.com/reach-out/contact-us", {
         name,
         email,
         message,

@@ -18,7 +18,7 @@ export default function ForgotPassword() {
     e.preventDefault();
     setError("");
     try {
-      const res = await axios.post("http://localhost:5000/forgot-password", { email });
+      const res = await axios.post("https://mern-job-portal-6i94.onrender.com/forgot-password", { email });
       setMessage(res.data.message);
       setStep(2);
     } catch (err: any) {
@@ -30,7 +30,7 @@ export default function ForgotPassword() {
     e.preventDefault();
     setError("");
     try {
-      const res = await axios.post("http://localhost:5000/verify-code", { email, code: verificationCode });
+      const res = await axios.post("https://mern-job-portal-6i94.onrender.com/verify-code", { email, code: verificationCode });
       setMessage(res.data.message);
       setStep(3);
     } catch (err: any) {
@@ -42,7 +42,7 @@ export default function ForgotPassword() {
     e.preventDefault();
     setError("");
     try {
-      const res = await axios.post("http://localhost:5000/reset-password", { email, code: verificationCode, newPassword });
+      const res = await axios.post("https://mern-job-portal-6i94.onrender.com/reset-password", { email, code: verificationCode, newPassword });
       setMessage(res.data.message);
       setTimeout(() => {
         router.push("/login"); // Redirect after 2 seconds
