@@ -6,11 +6,19 @@ import axios from "axios";
 import { Container, Row, Col, Card, Spinner, Button } from "react-bootstrap";
 import Link from "next/link";
 
+interface Job {
+  _id: string;
+  title: string;
+  companyName: string;
+  description: string;
+  salary: number;
+}
+
 export default function SearchResults() {
   const { query } = useParams();
   const router = useRouter();
-  const [jobs, setJobs] = useState([]);
-  const [appliedJobs, setAppliedJobs] = useState([]); // Store applied jobs
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [appliedJobs, setAppliedJobs] = useState<string[]>([]); // array of applied job IDs
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -24,19 +32,18 @@ export default function SearchResults() {
     const fetchData = async () => {
       try {
         // Fetch all jobs
-        const res = await axios.get("http://localhost:5000/api/jobs");
-        const filteredJobs = res.data.filter(
-          (job) =>
-            job.title.toLowerCase().includes(query.toLowerCase()) ||
-            job.companyName.toLowerCase().includes(query.toLowerCase())
+        const res = await axios.get<Job[]>("http://localhost:5000/api/jobs");
+        const filteredJobs = res.data.filter((job: Job) =>
+          job.title.toLowerCase().includes(query.toLowerCase()) ||
+          job.companyName.toLowerCase().includes(query.toLowerCase())
         );
         setJobs(filteredJobs);
 
         // Fetch applied jobs
-        const appliedRes = await axios.get("http://localhost:5000/user/applied-jobs", {
+        const appliedRes = await axios.get<string[]>("http://localhost:5000/user/applied-jobs", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setAppliedJobs(appliedRes.data); // Store applied job IDs
+        setAppliedJobs(appliedRes.data);
       } catch (err) {
         console.error("Error fetching search results:", err);
         setError("Failed to fetch search results.");
@@ -61,7 +68,7 @@ export default function SearchResults() {
       ) : jobs.length > 0 ? (
         <Row className="mt-4">
           {jobs.map((job) => {
-            const hasApplied = appliedJobs.includes(job._id); // Check if applied
+            const hasApplied = appliedJobs.includes(job._id);
 
             return (
               <Col key={job._id} md={6} lg={4} className="mb-4">
@@ -77,7 +84,7 @@ export default function SearchResults() {
                         Applied
                       </Button>
                     ) : (
-                      <Link href={`/apply/${job._id}`} passHref>
+                      <Link href={`/apply/${job._id}`} passHref legacyBehavior>
                         <Button variant="primary" className="w-100 mt-3">
                           Apply Now
                         </Button>
