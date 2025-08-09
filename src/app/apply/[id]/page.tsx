@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Form, Button, Card, Container, Row, Col, Alert, Spinner } from "react-bootstrap";
 import { useRouter, useParams } from "next/navigation";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 export default function ApplyPage() {
   const [experience, setExperience] = useState("");
@@ -11,7 +11,7 @@ export default function ApplyPage() {
   const [resume, setResume] = useState<File | null>(null);
   const router = useRouter();
   const params = useParams();
-  const jobId = params.id as string; // Extract jobId safely
+  const jobId = params.id as string;
 
   const [job, setJob] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -32,7 +32,7 @@ export default function ApplyPage() {
         setJob(res.data);
       } catch (err) {
         setError("Failed to fetch job details");
-        console.error("API Fetch Error:", err); // Debugging
+        console.error("API Fetch Error:", err);
       } finally {
         setLoading(false);
       }
@@ -46,60 +46,66 @@ export default function ApplyPage() {
     setError("");
 
     const token = localStorage.getItem("token");
-
     if (!token) {
-        alert("You must be logged in to apply for jobs.");
-        router.push("/login");
-        return;
+      alert("You must be logged in to apply for jobs.");
+      router.push("/login");
+      return;
     }
 
-    // Create FormData to send file
     const formData = new FormData();
     formData.append("experience", experience);
     formData.append("coverletter", coverletter);
     if (resume) {
-        formData.append("resume", resume); // Attach file
+      formData.append("resume", resume);
     }
 
     try {
-        const res = await axios.post(
-            `http://localhost:5000/api/jobs/${jobId}/apply`,
-            formData,
-            {
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "multipart/form-data",
-                },
-            }
-        );
+      await axios.post(
+        `http://localhost:5000/api/jobs/${jobId}/apply`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-        alert("Application submitted and email sent to the company!");
-        router.push("/");
-    } catch (err) {
-        console.error("API Error:", err.response?.data);
-        setError(err.response?.data?.error || "Something went wrong!");
+      alert("Application submitted and email sent to the company!");
+      router.push("/");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        console.error("API Error:", error.response?.data);
+        setError(error.response?.data?.error || "Something went wrong!");
+      } else {
+        console.error("Unexpected Error:", error);
+        setError("An unexpected error occurred.");
+      }
     }
   };
 
-  if (loading) return (
-    <div className="d-flex justify-content-center align-items-center vh-100">
-      <Spinner animation="border" role="status">
-        <span className="visually-hidden">Loading...</span>
-      </Spinner>
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </div>
+    );
 
-  if (error) return (
-    <Alert variant="danger" className="text-center mt-5">
-      {error}
-    </Alert>
-  );
+  if (error)
+    return (
+      <Alert variant="danger" className="text-center mt-5">
+        {error}
+      </Alert>
+    );
 
-  if (!job) return (
-    <Alert variant="warning" className="text-center mt-5">
-      Job not found
-    </Alert>
-  );
+  if (!job)
+    return (
+      <Alert variant="warning" className="text-center mt-5">
+        Job not found
+      </Alert>
+    );
 
   return (
     <Container className="my-5">
@@ -107,22 +113,38 @@ export default function ApplyPage() {
         <Col md={8}>
           <Card className="shadow-lg">
             <Card.Header className="bg-primary text-white">
-              <h1 className="text-center mb-0">Applying for Job: {job.title}</h1>
+              <h1 className="text-center mb-0">
+                Applying for Job: {job.title}
+              </h1>
             </Card.Header>
             <Card.Body>
-              <p><strong>Company:</strong> {job.companyName}</p>
-              <p><strong>Description:</strong> {job.description}</p>
-              <p><strong>Location:</strong> {job.companyLocation}</p>
-              <p><strong>Salary:</strong> {job.salary}</p>
+              <p>
+                <strong>Company:</strong> {job.companyName}
+              </p>
+              <p>
+                <strong>Description:</strong> {job.description}
+              </p>
+              <p>
+                <strong>Location:</strong> {job.companyLocation}
+              </p>
+              <p>
+                <strong>Salary:</strong> {job.salary}
+              </p>
 
               <hr />
 
               <h2 className="text-center mb-4">Application Form</h2>
-              {error && <Alert variant="danger" className="text-center">{error}</Alert>}
+              {error && (
+                <Alert variant="danger" className="text-center">
+                  {error}
+                </Alert>
+              )}
 
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
-                  <Form.Label><strong>Experience (Years)</strong></Form.Label>
+                  <Form.Label>
+                    <strong>Experience (Years)</strong>
+                  </Form.Label>
                   <Form.Control
                     type="number"
                     placeholder="Enter your experience"
@@ -133,7 +155,9 @@ export default function ApplyPage() {
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                  <Form.Label><strong>Cover Letter</strong></Form.Label>
+                  <Form.Label>
+                    <strong>Cover Letter</strong>
+                  </Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={5}
@@ -145,17 +169,26 @@ export default function ApplyPage() {
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                  <Form.Label><strong>Resume (PDF/DOC)</strong></Form.Label>
+                  <Form.Label>
+                    <strong>Resume (PDF/DOC)</strong>
+                  </Form.Label>
                   <Form.Control
                     type="file"
                     accept=".pdf,.doc,.docx"
                     required
-                    onChange={(e) => setResume(e.target.files?.[0] || null)}
+                    onChange={(e) =>
+                      setResume(e.target.files?.[0] || null)
+                    }
                   />
                 </Form.Group>
 
                 <div className="d-grid">
-                  <Button type="submit" variant="primary" size="lg" className="fw-bold">
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    size="lg"
+                    className="fw-bold"
+                  >
                     Submit Application
                   </Button>
                 </div>
