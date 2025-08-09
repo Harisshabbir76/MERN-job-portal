@@ -1,44 +1,43 @@
 "use client"
 
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { Form, Button, Card, Container, Row, Col } from "react-bootstrap";
+import { Form, Button, Card, Container, Row, Col } from "react-bootstrap"
 
+export default function ContactUs() {
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [message, setMessage] = useState("")
+  const [error, setError] = useState("")
 
-export default function ContactUs(){
+  const router = useRouter()
 
-    const [name, setName]=useState("");
-    const [email, setEmail]=useState("");  
-    const [message, setMessage]=useState("");
-    const [error, setError] = useState("");
-    
+  const handleMessage = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError("")
 
-    const router=useRouter()
-
-    const handleMessage=async  (e: React.FormEvent)=>{
-        e.preventDefault()
-        setError("")
-
-        try{
-            const res=await axios.post("http://localhost:5000/reach-out/contact-us",{
-                name,
-                email,
-                message
-
-            })
-            alert("Message send successfully")
-            router.push("/")
-        }catch(err){
-          setError(err.response?.data?.error || err.message || "Something went wrong!");
-        }
-
+    try {
+      const res = await axios.post("http://localhost:5000/reach-out/contact-us", {
+        name,
+        email,
+        message,
+      })
+      alert("Message sent successfully")
+      router.push("/")
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error || err.message || "Something went wrong!")
+      } else if (err instanceof Error) {
+        setError(err.message)
+      } else {
+        setError("Something went wrong!")
+      }
     }
+  }
 
-
-    return (
-        
-        <div>
+  return (
+    <div>
       <Container className="d-flex justify-content-center align-items-center mt-5">
         <Card
           className="p-4 text-black shadow-lg rounded-4"
@@ -73,13 +72,12 @@ export default function ContactUs(){
               <Form.Control
                 as="textarea"
                 rows={4}
-                placeholder="write your message..."
+                placeholder="Write your message..."
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
               />
             </Form.Group>
 
-            
             <Row className="mt-4">
               <Col>
                 <Button type="submit" className="w-100 btn btn-primary fw-bold shadow-sm">
@@ -91,9 +89,5 @@ export default function ContactUs(){
         </Card>
       </Container>
     </div>
-
-
-
-
-    )
+  )
 }
