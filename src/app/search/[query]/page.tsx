@@ -17,6 +17,10 @@ interface Job {
 export default function SearchResults() {
   const { query } = useParams();
   const router = useRouter();
+
+  // Ensure query is a string, not array or undefined
+  const searchQuery = Array.isArray(query) ? query[0] : query || "";
+
   const [jobs, setJobs] = useState<Job[]>([]);
   const [appliedJobs, setAppliedJobs] = useState<string[]>([]); // array of applied job IDs
   const [loading, setLoading] = useState(true);
@@ -34,8 +38,8 @@ export default function SearchResults() {
         // Fetch all jobs
         const res = await axios.get<Job[]>("http://localhost:5000/api/jobs");
         const filteredJobs = res.data.filter((job: Job) =>
-          job.title.toLowerCase().includes(query.toLowerCase()) ||
-          job.companyName.toLowerCase().includes(query.toLowerCase())
+          job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          job.companyName.toLowerCase().includes(searchQuery.toLowerCase())
         );
         setJobs(filteredJobs);
 
@@ -53,11 +57,11 @@ export default function SearchResults() {
     };
 
     fetchData();
-  }, [query, router]);
+  }, [searchQuery, router]);
 
   return (
     <Container className="mt-5">
-      <h2 className="text-center text-primary fw-bold">Search Results for "{query}"</h2>
+      <h2 className="text-center text-primary fw-bold">Search Results for "{searchQuery}"</h2>
 
       {loading ? (
         <div className="text-center mt-4">
@@ -97,7 +101,7 @@ export default function SearchResults() {
           })}
         </Row>
       ) : (
-        <p className="text-center mt-4 text-warning">No jobs found matching "{query}".</p>
+        <p className="text-center mt-4 text-warning">No jobs found matching "{searchQuery}".</p>
       )}
     </Container>
   );
