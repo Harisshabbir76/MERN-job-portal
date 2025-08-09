@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, ChangeEvent } from "react";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import { Container, Card, Spinner, Button, Alert, Row, Col, Badge, Form } from "react-bootstrap";
@@ -8,10 +8,10 @@ import { Container, Card, Spinner, Button, Alert, Row, Col, Badge, Form } from "
 export default function ProfilePage() {
   const router = useRouter();
   const { userId } = useParams();
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [showForm, setShowForm] = useState(false); // 👈 Track form visibility
+  const [showForm, setShowForm] = useState(false); // Track form visibility
   const [formData, setFormData] = useState({
     skills: "",
     linkedin: "",
@@ -45,24 +45,24 @@ export default function ProfilePage() {
     fetchUserData();
   }, [userId, router]);
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
-  
+
     if (!token) {
       alert("Authentication token missing. Please log in again.");
       router.push("/login");
       return;
     }
-  
+
     try {
       // Merge old and new skills
       const updatedSkills = [...(user.skills || []), ...formData.skills.split(",").map((s) => s.trim())];
-  
+
       const res = await axios.put(
         "http://localhost:5000/user/update",
         {
@@ -78,7 +78,7 @@ export default function ProfilePage() {
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-  
+
       setUser(res.data); // Update frontend with new user data
       setShowForm(false); // Hide form after successful update
       alert("Profile updated successfully!");
@@ -87,7 +87,6 @@ export default function ProfilePage() {
       alert("Error updating profile.");
     }
   };
-  
 
   if (loading) {
     return (
@@ -127,8 +126,8 @@ export default function ProfilePage() {
               {user.skills && user.skills.length > 0 && (
                 <>
                   <p><strong>Skills:</strong> {user.skills.join(", ")}</p>
-                  <p><strong>LinkedIn:</strong> <a href={user.linkedin} target="_blank">{user.linkedin}</a></p>
-                  <p><strong>Portfolio:</strong> <a href={user.portfolio} target="_blank">{user.portfolio}</a></p>
+                  <p><strong>LinkedIn:</strong> <a href={user.linkedin} target="_blank" rel="noopener noreferrer">{user.linkedin}</a></p>
+                  <p><strong>Portfolio:</strong> <a href={user.portfolio} target="_blank" rel="noopener noreferrer">{user.portfolio}</a></p>
                   <p><strong>Phone:</strong> {user.phone}</p>
                   <p><strong>Education:</strong> {user.education?.institution} ({user.education?.degree}, {user.education?.year})</p>
                 </>
@@ -140,7 +139,7 @@ export default function ProfilePage() {
                   variant="warning"
                   size="lg"
                   className="fw-bold"
-                  onClick={() => setShowForm(!showForm)} // 👈 Toggle form visibility
+                  onClick={() => setShowForm(!showForm)} // Toggle form visibility
                 >
                   {showForm ? "Cancel" : "Edit Profile"}
                 </Button>
@@ -195,5 +194,3 @@ export default function ProfilePage() {
     </Container>
   );
 }
-
-
