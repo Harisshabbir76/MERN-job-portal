@@ -29,7 +29,7 @@ export default function Register() {
       console.log("User registered:", res.data);
       alert("Registration Successful!");
       if (role === "Looking for job"){
-        router.push("/jobs");
+        router.push("/");
       }else if (role === "Hiring job"){
         router.push("/hire");
       }else{

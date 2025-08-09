@@ -24,13 +24,13 @@ interface User {
 
 export default function Jobs() {
   const router = useRouter();
-
   const [jobs, setJobs] = useState<Job[]>([]);
   const [filteredJobs, setFilteredJobs] = useState<Job[]>([]);
-  const [appliedJobs, setAppliedJobs] = useState<string[]>([]); // Array of job IDs
+  const [appliedJobs, setAppliedJobs] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [user, setUser] = useState<User | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -41,31 +41,31 @@ export default function Jobs() {
 
     const fetchData = async () => {
       try {
-        // Fetch user data
+        // Verify token and fetch user data first
         const userRes = await axios.get<User>("https://mern-job-portal-6i94.onrender.com/user", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(userRes.data);
+        setAuthChecked(true);
 
-        // Fetch jobs data
-        const jobsRes = await axios.get<Job[]>("https://mern-job-portal-6i94.onrender.com/api/jobs");
-        setJobs(jobsRes.data);
-
-        // Filter out jobs posted by logged-in user
-        const jobsNotPostedByUser = jobsRes.data.filter(
-          (job) => job.createdBy !== userRes.data._id
-        );
-        setFilteredJobs(jobsNotPostedByUser);
-
-        // Fetch applied jobs (IDs)
-        const appliedJobsRes = await axios.get<string[]>(
-          "https://mern-job-portal-6i94.onrender.com/user/applied-jobs",
-          {
+        // Only proceed with fetching jobs if authentication is successful
+        const [jobsRes, appliedJobsRes] = await Promise.all([
+          axios.get<Job[]>("https://mern-job-portal-6i94.onrender.com/api/jobs"),
+          axios.get<string[]>("https://mern-job-portal-6i94.onrender.com/user/applied-jobs", {
             headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+          }),
+        ]);
+
+        setJobs(jobsRes.data);
+        setFilteredJobs(jobsRes.data.filter(job => job.createdBy !== userRes.data._id));
         setAppliedJobs(appliedJobsRes.data);
       } catch (err) {
+        if (axios.isAxiosError(err) && err.response?.status === 401) {
+          // Token is invalid or expired
+          localStorage.removeItem("token");
+          router.push("/login");
+          return;
+        }
         setError("Failed to fetch jobs or user data");
         console.error(err);
       } finally {
@@ -75,6 +75,11 @@ export default function Jobs() {
 
     fetchData();
   }, [router]);
+
+  // Show nothing while checking auth or redirecting
+  if (!authChecked && loading) {
+    return null;
+  }
 
   if (loading) {
     return (
